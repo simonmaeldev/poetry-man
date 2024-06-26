@@ -7,8 +7,7 @@ import llm
 from termcolor import colored
 from prompt import SYSTEM_PROMPT
 
-def interact_with_user(message):
-    print(colored(message, "cyan"))
+def interact_with_user():
     user_input = input("Your response: ")
     return json.dumps({
         "type": "user",
@@ -72,7 +71,7 @@ def main():
             print(colored(response["message"], "green"))
             if response["message"] == "Done!":
                 break
-            user_response = interact_with_user("Your response: ")
+            user_response = interact_with_user()
             response = json.loads(conversation.prompt(user_response))
         elif response["dest"] == "terminal":
             # Handle terminal command execution
