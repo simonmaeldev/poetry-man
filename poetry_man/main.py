@@ -5,6 +5,7 @@ import sys
 from dotenv import load_dotenv
 import llm
 from termcolor import colored
+from prompt import SYSTEM_PROMPT
 
 def interact_with_user(message):
     print(colored(message, "cyan"))
@@ -65,7 +66,7 @@ def main():
         "message": user_prompt
     })
 
-    response = conversation.prompt(initial_prompt, system="system-prompt")
+    response = conversation.prompt(initial_prompt, system=SYSTEM_PROMPT)
 
     while not (response.get("dest") == "user" and response.get("message") == "Done!"):
         if response.get("dest") == "terminal":
