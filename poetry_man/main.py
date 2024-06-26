@@ -5,6 +5,14 @@ from dotenv import load_dotenv
 import llm
 from termcolor import colored
 
+def interact_with_user(message):
+    print(colored(message, "cyan"))
+    user_input = input("Your response: ")
+    return json.dumps({
+        "type": "user",
+        "message": user_input
+    })
+
 def execute_command(command):
     command_list = command.split()
     if 'sudo' in command_list:
@@ -56,7 +64,8 @@ def main():
             response = conversation.prompt(terminal_response)
         elif response.get("dest") == "user":
             # Handle user interaction
-            pass
+            user_response = interact_with_user(response.get("message"))
+            response = conversation.prompt(user_response)
         else:
             print("Invalid response destination")
     
