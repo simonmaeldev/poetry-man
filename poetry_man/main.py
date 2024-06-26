@@ -67,7 +67,7 @@ def main():
     })
 
     response = conversation.prompt(initial_prompt, system=SYSTEM_PROMPT)
-
+    print(response)
     while not (response.get("dest") == "user" and response.get("message") == "Done!"):
         if response.get("dest") == "terminal":
             # Handle terminal command execution
@@ -86,3 +86,4 @@ def main():
             return
     print("Done!")
     
+main()
