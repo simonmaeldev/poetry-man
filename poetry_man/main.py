@@ -65,22 +65,30 @@ def main():
         "message": user_prompt
     })
 
-    response = json.loads(conversation.prompt(initial_prompt, system=SYSTEM_PROMPT))
+    responseObj = conversation.prompt(initial_prompt, system=SYSTEM_PROMPT)
+    print(responseObj)
+    response = json.loads(responseObj.text())
     while True:
+        print(json.dumps(response, indent=2))
         if response["dest"] == "user":
             print(colored(response["message"], "green"))
             if response["message"] == "Done!":
                 break
             user_response = interact_with_user()
-            response = json.loads(conversation.prompt(user_response))
+            responseObj = json.loads(conversation.prompt(user_response))
+            print(responseObj)
+            response = responseObj.text()
         elif response["dest"] == "terminal":
             # Handle terminal command execution
             command_result = execute_command(response["message"])
             terminal_response = json.dumps({
                 "type": "terminal",
                 "message": json.loads(command_result)
-            })
-            response = json.loads(conversation.prompt(terminal_response))
+            }, indent=2)
+            print(terminal_response)
+            responseObj = json.loads(conversation.prompt(terminal_response))
+            print(responseObj)
+            response = responseObj.text()
         else:
             print(colored("Invalid response destination", "red"))
             break
