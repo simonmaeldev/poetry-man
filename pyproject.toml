@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "poetry-man"
+version = "0.1.0"
+description = ""
+authors = ["Mael <simonmaeldev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+llm = "^0.14"
+llm-claude-3 = "^0.4"
+python-dotenv = "^1.0.1"
+termcolor = "^2.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

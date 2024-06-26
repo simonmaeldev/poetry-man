@@ -68,4 +68,6 @@ def main():
             response = conversation.prompt(user_response)
         else:
             print("Invalid response destination")
+            return
+    print("Done!")
     
