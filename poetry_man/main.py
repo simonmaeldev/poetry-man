@@ -1,6 +1,22 @@
 import os
+import subprocess
+import json
 from dotenv import load_dotenv
 import llm
+
+def execute_command(command):
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        return_code = result.returncode
+        output = result.stdout
+    except subprocess.CalledProcessError as e:
+        return_code = e.returncode
+        output = e.output
+
+    return json.dumps({
+        "return_code": return_code,
+        "message": output.strip()
+    })
 
 def main():
     load_dotenv()
