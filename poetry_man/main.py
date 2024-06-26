@@ -46,13 +46,15 @@ def main():
     while not (response.get("dest") == "user" and response.get("message") == "Done!"):
         if response.get("dest") == "terminal":
             # Handle terminal command execution
-            pass
+            command_result = execute_command(response.get("message"))
+            terminal_response = json.dumps({
+                "type": "terminal",
+                "message": json.loads(command_result)
+            })
+            response = conversation.prompt(terminal_response)
         elif response.get("dest") == "user":
             # Handle user interaction
             pass
         else:
             print("Invalid response destination")
-
-        # Get next response (you'll need to implement this part)
-        # response = get_next_response(conversation)
     
