@@ -1,6 +1,7 @@
 import os
 import subprocess
 import json
+import sys
 from dotenv import load_dotenv
 import llm
 from termcolor import colored
@@ -51,7 +52,20 @@ def main():
     model.key = ANTHROPIC_API_KEY
 
     conversation = model.conversation()
-    response = conversation.prompt("user prompt", system="system-prompt")
+
+    # Get the user prompt from CLI argument or ask the user
+    if len(sys.argv) > 1:
+        user_prompt = sys.argv[1]
+    else:
+        user_prompt = input("Enter your prompt: ")
+
+    # Wrap the user prompt in the appropriate format
+    initial_prompt = json.dumps({
+        "type": "user",
+        "message": user_prompt
+    })
+
+    response = conversation.prompt(initial_prompt, system="system-prompt")
 
     while not (response.get("dest") == "user" and response.get("message") == "Done!"):
         if response.get("dest") == "terminal":
