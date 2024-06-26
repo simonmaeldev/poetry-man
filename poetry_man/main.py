@@ -6,12 +6,13 @@ import llm
 
 def execute_command(command):
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        command_list = command.split()
+        result = subprocess.run(command_list, check=True, capture_output=True, text=True)
         return_code = result.returncode
         output = result.stdout
     except subprocess.CalledProcessError as e:
         return_code = e.returncode
-        output = e.output
+        output = e.stderr
 
     return json.dumps({
         "return_code": return_code,
