@@ -57,7 +57,7 @@ def main():
     if len(sys.argv) > 1:
         user_prompt = sys.argv[1]
     else:
-        user_prompt = input("Enter your prompt: ")
+        user_prompt = input("Hi! I'm poetry-man, the manager of poetry projects. How can I help you?\nYour message: ")
 
     # Wrap the user prompt in the appropriate format
     initial_prompt = json.dumps({
