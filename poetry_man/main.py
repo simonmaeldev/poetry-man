@@ -31,12 +31,20 @@ def execute_command(command):
     try:
         print(f"executing command:")
         print(colored(command, "green"))
-        result = subprocess.run(command_list, check=True, capture_output=True, text=True)
-        return_code = result.returncode
-        output = result.stdout
-    except subprocess.CalledProcessError as e:
-        return_code = e.returncode
-        output = e.stderr
+        process = subprocess.Popen(
+            command_list,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=os.getcwd(),  # Use the current working directory
+            env=os.environ.copy()  # Use a copy of the current environment
+        )
+        stdout, stderr = process.communicate()
+        return_code = process.returncode
+        output = stdout if stdout else stderr
+    except Exception as e:
+        return_code = -1
+        output = str(e)
 
     return json.dumps({
         "return_code": return_code,
