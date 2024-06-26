@@ -20,6 +20,8 @@ def execute_command(command):
             })
 
     try:
+        print(f"executing command:")
+        print(colored(command, "green"))
         result = subprocess.run(command_list, check=True, capture_output=True, text=True)
         return_code = result.returncode
         output = result.stdout
