@@ -10,14 +10,14 @@ def execute_command(command):
     if 'sudo' in command_list:
         print(colored("Warning: The bot is attempting to use sudo. This may require elevated privileges.", "red"))
     
-    print(f"Command to execute: {command}")
-    confirmation = input("Do you want to proceed? (y/n) [default: n]: ").lower()
-    
-    if confirmation != 'y':
-        return json.dumps({
-            "return_code": -1,
-            "message": "Command execution cancelled by user."
-        })
+        print(f"Command to execute: {command}")
+        confirmation = input("Do you want to proceed? (y/n) [default: n]: ").lower()
+        
+        if confirmation != 'y':
+            return json.dumps({
+                "return_code": -1,
+                "message": "Command execution cancelled by user."
+            })
 
     try:
         result = subprocess.run(command_list, check=True, capture_output=True, text=True)
