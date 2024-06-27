@@ -5,7 +5,7 @@ import sys
 from dotenv import load_dotenv
 import llm
 from termcolor import colored
-from prompt import SYSTEM_PROMPT
+from .prompt import SYSTEM_PROMPT
 import re
 
 def interact_with_user():
