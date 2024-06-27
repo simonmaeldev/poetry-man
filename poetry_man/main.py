@@ -10,6 +10,7 @@ import re
 
 def interact_with_user():
     user_input = input("Your response: ")
+    #code: line above can throw UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc3 in position 12: invalid continuation byte. Please fix that
     return json.dumps({
         "type": "user",
         "message": user_input
