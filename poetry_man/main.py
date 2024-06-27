@@ -59,18 +59,27 @@ def search_for_tag(answer: str, tag: str) -> str:
         return match.group(1)
     return None
 
+def clean_json_string(json_str):
+    if json_str is None:
+        return None
+    # Remove any non-printable characters
+    return ''.join(char for char in json_str if char.isprintable())
+
 def prompt_json(conversation, prompt:str, system="")->json:
     responseObj = conversation.prompt(prompt) if system == "" else conversation.prompt(prompt, system=system)
     txt = responseObj.text()
     json_str = search_for_tag(txt, "JSON")
-    if json_str == None :
+    if json_str is None:
         print(colored(f"Error no JSON tag found. txt: {txt}", "red"))
+        return None
+
+    cleaned_json_str = clean_json_string(json_str)
 
     try:
-        json_obj = json.loads(json_str)
+        json_obj = json.loads(cleaned_json_str, strict=False)
     except json.JSONDecodeError as e:
         print(colored(f"Error decoding JSON: {e}", "red"))
-        print(f"Problematic JSON string: {json_str}")
+        print(f"Problematic JSON string: {cleaned_json_str}")
         return None
 
     return json_obj
