@@ -15,11 +15,10 @@ def interact_with_user():
         "message": user_input
     })
 
-def execute_command(command):
-    command_list = command.split()
-    if ['sudo', 'rm', 'mv'] in command_list:
-        print(colored("Warning: The bot is attempting to use sudo. This may require elevated privileges.", "red"))
-    
+def execute_command(command:str):
+    dangerous_commands = ['sudo', 'rm', 'mv']
+    if any(cmd in command for cmd in dangerous_commands):
+        print(colored("Warning: The bot is attempting to use a potentially dangerous command", "red"))
         print(f"Command to execute: {command}")
         confirmation = input("Do you want to proceed? (y/n) [default: n]: ").lower()
         
@@ -33,10 +32,11 @@ def execute_command(command):
         print(f"executing command:")
         print(colored(command, "green"))
         process = subprocess.Popen(
-            command_list,
+            command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            shell=True,
             cwd=os.getcwd(),  # Use the current working directory
             env=os.environ.copy()  # Use a copy of the current environment
         )
@@ -68,6 +68,9 @@ def clean_json_string(json_str):
 def prompt_json(conversation, prompt:str, system="")->json:
     responseObj = conversation.prompt(prompt) if system == "" else conversation.prompt(prompt, system=system)
     txt = responseObj.text()
+    thinking = search_for_tag(txt, "thinking")
+    if thinking:
+        print(colored(f"thinking:\n{thinking}", "yellow"))
     json_str = search_for_tag(txt, "JSON")
     if json_str is None:
         print(colored(f"Error no JSON tag found. txt: {txt}", "red"))
@@ -121,10 +124,10 @@ def main():
                 "type": "terminal",
                 "message": json.loads(command_result)
             }, indent=2)
-            print(terminal_response)
+            print(f"terminal response : \n{terminal_response}")
             response = prompt_json(conversation, terminal_response, SYSTEM_PROMPT)
         else:
             print(colored("Invalid response destination", "red"))
             break
-    
+
 main()
