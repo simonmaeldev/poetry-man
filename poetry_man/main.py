@@ -9,11 +9,8 @@ from prompt import SYSTEM_PROMPT
 import re
 
 def interact_with_user():
-    try:
-        user_input = input("Your response: ")
-    except UnicodeDecodeError:
-        print("Error: Unable to decode input. Please try again.")
-        return interact_with_user()
+    print("Your response: ", end="", flush=True)
+    user_input = sys.stdin.readline().strip()
     return json.dumps({
         "type": "user",
         "message": user_input
