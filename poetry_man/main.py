@@ -66,10 +66,12 @@ def prompt_json(conversation, prompt:str, system="")->json:
     if json_str == None :
         print(colored(f"Error no JSON tag found. txt: {txt}", "red"))
 
-    #code: when loading json_str to a json object, sometimes there is an error json.decoder.JSONDecodeError: Invalid control character. Please fix that
-
-    #code: do a try catch there to print info if there is an error
-    json_obj = json.loads(json_str)
+    try:
+        json_obj = json.loads(json_str)
+    except json.JSONDecodeError as e:
+        print(colored(f"Error decoding JSON: {e}", "red"))
+        print(f"Problematic JSON string: {json_str}")
+        return None
 
     return json_obj
 
