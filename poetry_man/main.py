@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import llm
 from termcolor import colored
 from prompt import SYSTEM_PROMPT
+import re
 
 def interact_with_user():
     user_input = input("Your response: ")
@@ -16,7 +17,7 @@ def interact_with_user():
 
 def execute_command(command):
     command_list = command.split()
-    if 'sudo' in command_list:
+    if ['sudo', 'rm', 'mv'] in command_list:
         print(colored("Warning: The bot is attempting to use sudo. This may require elevated privileges.", "red"))
     
         print(f"Command to execute: {command}")
@@ -51,6 +52,27 @@ def execute_command(command):
         "message": output.strip()
     })
 
+def search_for_tag(answer: str, tag: str) -> str:
+    regex = f'<{tag}>(.*?)</{tag}>'
+    match = re.search(regex, answer, re.DOTALL)
+    if match:
+        return match.group(1)
+    return None
+
+def prompt_json(conversation, prompt:str, system="")->json:
+    responseObj = conversation.prompt(prompt) if system == "" else conversation.prompt(prompt, system=system)
+    txt = responseObj.text()
+    json_str = search_for_tag(txt, "JSON")
+    if json_str == None :
+        print(colored(f"Error no JSON tag found. txt: {txt}", "red"))
+
+    #code: when loading json_str to a json object, sometimes there is an error json.decoder.JSONDecodeError: Invalid control character. Please fix that
+
+    #code: do a try catch there to print info if there is an error
+    json_obj = json.loads(json_str)
+
+    return json_obj
+
 def main():
     load_dotenv()
 
@@ -73,19 +95,14 @@ def main():
         "message": user_prompt
     })
 
-    responseObj = conversation.prompt(initial_prompt, system=SYSTEM_PROMPT)
-    print(responseObj)
-    response = json.loads(responseObj.text())
+    response = prompt_json(conversation, initial_prompt, SYSTEM_PROMPT)
     while True:
-        print(json.dumps(response, indent=2))
         if response["dest"] == "user":
             print(colored(response["message"], "green"))
             if response["message"] == "Done!":
                 break
             user_response = interact_with_user()
-            responseObj = json.loads(conversation.prompt(user_response))
-            print(responseObj)
-            response = responseObj.text()
+            response = prompt_json(conversation, user_response, SYSTEM_PROMPT)
         elif response["dest"] == "terminal":
             # Handle terminal command execution
             command_result = execute_command(response["message"])
@@ -94,9 +111,7 @@ def main():
                 "message": json.loads(command_result)
             }, indent=2)
             print(terminal_response)
-            responseObj = json.loads(conversation.prompt(terminal_response))
-            print(responseObj)
-            response = responseObj.text()
+            response = prompt_json(conversation, terminal_response, SYSTEM_PROMPT)
         else:
             print(colored("Invalid response destination", "red"))
             break
