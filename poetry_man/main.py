@@ -9,8 +9,11 @@ from prompt import SYSTEM_PROMPT
 import re
 
 def interact_with_user():
-    user_input = input("Your response: ")
-    #code: line above can throw UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc3 in position 12: invalid continuation byte. Please fix that
+    try:
+        user_input = input("Your response: ")
+    except UnicodeDecodeError:
+        print("Error: Unable to decode input. Please try again.")
+        return interact_with_user()
     return json.dumps({
         "type": "user",
         "message": user_input
